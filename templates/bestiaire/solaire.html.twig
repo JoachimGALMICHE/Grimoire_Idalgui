@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bestiaire Solaire — Grimoire Idalgui</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --g1: #fff8d0; --g2: #f5d060; --g3: #c9a84c;
+            --g4: #7a5c1e; --g5: #3b2a0a; --g6: #1a0f00;
+        }
+        body { min-height: 100vh; font-family: 'EB Garamond', serif; background: var(--g6); color: #f5e6a3; overflow-x: hidden; }
+
+        .bg-fixed {
+            position: fixed; inset: 0; z-index: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 15% 0%, #f5d06020 0%, transparent 55%),
+                radial-gradient(ellipse 60% 70% at 90% 100%, #c9a84c12 0%, transparent 60%),
+                linear-gradient(170deg, #2a1a05 0%, #1a0f00 40%, #0a0600 100%);
+        }
+        .sun-orb {
+            position: fixed; width: 400px; height: 400px; border-radius: 50%;
+            top: -150px; right: -100px; z-index: 1;
+            background: radial-gradient(circle at 35% 35%, #fff8d0, #f5d060 35%, #c9a84c 60%, #7a5c1e 85%, transparent 100%);
+            box-shadow: 0 0 80px #f5d06025, 0 0 200px #c9a84c12;
+            animation: pulse 8s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.03)} }
+
+        .page { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 0 2rem 4rem; }
+
+        /* HEADER */
+        header {
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1.2rem 2rem; margin: 0 -2rem;
+            background: rgba(26,15,0,0.8); backdrop-filter: blur(12px);
+            border-bottom: 1px solid #c9a84c15;
+        }
+        .header-left { display: flex; align-items: center; gap: 1rem; }
+        .btn-back {
+            font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.2em;
+            text-transform: uppercase; color: var(--g4); text-decoration: none;
+            padding: 0.4rem 0.8rem; border: 1px solid #7a5c1e30; border-radius: 2px;
+            transition: all 0.3s;
+        }
+        .btn-back:hover { color: var(--g3); border-color: #c9a84c50; }
+        .header-title { font-family: 'Cinzel Decorative', serif; font-size: 1rem; color: var(--g3); }
+        .header-sub { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--g4); }
+
+        /* HERO */
+        .hero { padding: 3rem 0 2rem; animation: fadeUp 0.8s ease both; }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+        .hero-eyebrow {
+            font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.4em;
+            text-transform: uppercase; color: var(--g4); margin-bottom: 0.8rem;
+            display: flex; align-items: center; gap: 1rem;
+        }
+        .hero-eyebrow::before, .hero-eyebrow::after { content:''; flex: 0 0 30px; height:1px; background:var(--g4); }
+        .hero-title { font-family: 'Cinzel Decorative', serif; font-size: 2.5rem; color: var(--g2); margin-bottom: 0.3rem; text-shadow: 0 0 30px #f5d06030; }
+        .hero-count { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.2em; color: var(--g4); text-transform: uppercase; }
+
+        /* ACTIONS BAR */
+        .actions-bar {
+            display: flex; align-items: center; gap: 1rem;
+            margin-bottom: 2.5rem; flex-wrap: wrap;
+            animation: fadeUp 0.8s ease 0.1s both;
+        }
+
+        .search-wrap { position: relative; flex: 1; min-width: 200px; }
+        .search-input {
+            width: 100%; padding: 0.7rem 1rem 0.7rem 2.5rem;
+            background: rgba(59,42,10,0.4); border: 1px solid #c9a84c25;
+            border-radius: 2px; font-family: 'EB Garamond', serif; font-size: 0.95rem;
+            color: #f5e6a3; outline: none; transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .search-input:focus { border-color: #c9a84c60; box-shadow: 0 0 0 2px #c9a84c15; }
+        .search-input::placeholder { opacity: 0.35; }
+        .search-icon { position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); color: var(--g4); font-size: 0.9rem; }
+
+        .btn-new {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.15em;
+            text-transform: uppercase; text-decoration: none;
+            padding: 0.7rem 1.4rem;
+            background: linear-gradient(135deg, #c9a84c, #7a5c1e);
+            color: #fff8d0; border-radius: 2px;
+            box-shadow: 0 4px 20px #c9a84c25;
+            transition: all 0.3s; white-space: nowrap;
+        }
+        .btn-new:hover { transform: translateY(-2px); box-shadow: 0 8px 30px #c9a84c40; }
+
+        /* FILTRES */
+        .filters { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; animation: fadeUp 0.8s ease 0.15s both; }
+        .filter-btn {
+            font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.15em;
+            text-transform: uppercase; padding: 0.3rem 0.8rem;
+            background: transparent; border: 1px solid #7a5c1e30;
+            color: var(--g4); border-radius: 1px; cursor: pointer;
+            transition: all 0.3s;
+        }
+        .filter-btn:hover, .filter-btn.active { background: #c9a84c15; border-color: #c9a84c50; color: var(--g3); }
+
+        /* GRILLE */
+        .creatures-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.2rem; animation: fadeUp 0.8s ease 0.2s both;
+        }
+
+        .creature-card {
+            background: linear-gradient(145deg, rgba(59,42,10,0.55) 0%, rgba(26,15,0,0.8) 100%);
+            border: 1px solid #c9a84c20; border-radius: 3px;
+            padding: 1.5rem; position: relative; overflow: hidden;
+            transition: all 0.4s cubic-bezier(.4,0,.2,1);
+            text-decoration: none; color: inherit; display: block;
+        }
+        .creature-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--g3), transparent);
+        }
+        .creature-card:hover { transform: translateY(-4px); border-color: #c9a84c45; box-shadow: 0 12px 40px #00000050, 0 0 20px #c9a84c08; }
+
+        .card-voie {
+            font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.25em;
+            text-transform: uppercase; color: var(--g4);
+            background: #c9a84c10; border: 1px solid #c9a84c20;
+            padding: 0.15rem 0.5rem; border-radius: 1px;
+            display: inline-block; margin-bottom: 0.8rem;
+        }
+        .card-nom { font-family: 'Cinzel Decorative', serif; font-size: 1.1rem; color: var(--g2); margin-bottom: 0.3rem; }
+        .card-type { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--g4); margin-bottom: 0.8rem; }
+        .card-desc { font-size: 0.88rem; color: #c9a87a; line-height: 1.6; font-style: italic; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+        .card-danger {
+            position: absolute; top: 1rem; right: 1rem;
+            font-size: 0.75rem; padding: 0.2rem 0.5rem;
+            border-radius: 1px; font-family: 'Cinzel', serif;
+            font-size: 0.55rem; letter-spacing: 0.1em; text-transform: uppercase;
+        }
+        .danger-faible { background: #1a3a1a; color: #6ab06a; border: 1px solid #2a5a2a; }
+        .danger-modere { background: #3a2a00; color: #c9a84c; border: 1px solid #5a4a10; }
+        .danger-eleve { background: #3a1a00; color: #d4804c; border: 1px solid #5a3010; }
+        .danger-extreme { background: #2a0a0a; color: #c94c4c; border: 1px solid #5a1a1a; }
+
+        .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 0.8rem; border-top: 1px solid #c9a84c15; }
+        .card-affinites { font-size: 0.75rem; color: var(--g4); font-style: italic; }
+        .card-date { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.1em; color: #3b2a0a; }
+
+        /* VIDE */
+        .empty-state {
+            grid-column: 1/-1; text-align: center; padding: 5rem 2rem;
+            animation: fadeUp 0.8s ease 0.3s both;
+        }
+        .empty-icon { font-size: 4rem; margin-bottom: 1.5rem; opacity: 0.3; }
+        .empty-title { font-family: 'Cinzel Decorative', serif; font-size: 1.2rem; color: var(--g4); margin-bottom: 0.8rem; }
+        .empty-text { font-size: 0.9rem; color: #3b2a0a; font-style: italic; margin-bottom: 2rem; }
+    </style>
+</head>
+<body>
+<div class="bg-fixed"></div>
+<div class="sun-orb"></div>
+
+<div class="page">
+    <header>
+        <div class="header-left">
+            <a href="{{ path('app_home') }}" class="btn-back">← Grimoire</a>
+            <div>
+                <div class="header-title">☀️ Bestiaire Solaire</div>
+                <div class="header-sub">Créatures & esprits des bois</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="hero">
+        <div class="hero-eyebrow">Voie Solaire</div>
+        <h1 class="hero-title">Bestiaire</h1>
+        <p class="hero-count">{{ creatures|length }} entité{% if creatures|length > 1 %}s{% endif %} répertoriée{% if creatures|length > 1 %}s{% endif %}</p>
+    </div>
+
+    <div class="actions-bar">
+        <form method="get" action="{{ path('bestiaire_index') }}" style="flex:1; display:flex; gap:1rem; flex-wrap:wrap;">
+            <div class="search-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" name="q" value="{{ search }}" class="search-input" placeholder="Rechercher une entité...">
+            </div>
+            <button type="submit" style="display:none"></button>
+        </form>
+        <a href="{{ path('bestiaire_new') }}" class="btn-new">
+            ✦ Nouvelle Fiche
+        </a>
+    </div>
+
+    <div class="filters">
+        <button class="filter-btn active" onclick="filterCards('all')">Toutes</button>
+        <button class="filter-btn" onclick="filterCards('Créature')">Créatures</button>
+        <button class="filter-btn" onclick="filterCards('Esprit')">Esprits</button>
+        <button class="filter-btn" onclick="filterCards('Divinité')">Divinités</button>
+        <button class="filter-btn" onclick="filterCards('Animal sacré')">Animaux sacrés</button>
+        <button class="filter-btn" onclick="filterCards('Fée')">Fées & Sidhe</button>
+    </div>
+
+    <div class="creatures-grid" id="grid">
+        {% if creatures is empty %}
+            <div class="empty-state">
+                <div class="empty-icon">🌿</div>
+                <div class="empty-title">Le bestiaire est vierge</div>
+                <p class="empty-text">Les créatures des bois n'ont pas encore été répertoriées.<br>Commence par créer ta première fiche.</p>
+                <a href="{{ path('bestiaire_new') }}" class="btn-new" style="display:inline-flex">✦ Créer la première fiche</a>
+            </div>
+        {% else %}
+            {% for creature in creatures %}
+            <a href="{{ path('bestiaire_show', {id: creature.id}) }}" class="creature-card" data-type="{{ creature.type }}">
+                {% if creature.danger %}
+                    <span class="card-danger danger-{{ creature.danger|lower|replace({' ': '-'}) }}">{{ creature.danger }}</span>
+                {% endif %}
+                <span class="card-voie">{{ creature.type ?: 'Entité' }}</span>
+                <div class="card-nom">{{ creature.nom }}</div>
+                {% if creature.origine %}
+                    <div class="card-type">{{ creature.origine }}</div>
+                {% endif %}
+                {% if creature.description %}
+                    <p class="card-desc">{{ creature.description }}</p>
+                {% endif %}
+                <div class="card-footer">
+                    <span class="card-affinites">{{ creature.affinites ?: '—' }}</span>
+                    <span class="card-date">{{ creature.createdAt|date('d/m/Y') }}</span>
+                </div>
+            </a>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function filterCards(type) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        document.querySelectorAll('.creature-card').forEach(card => {
+            card.style.display = (type === 'all' || card.dataset.type === type) ? 'block' : 'none';
+        });
+    }
+</script>
+</body>
+</html>

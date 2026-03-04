@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if mode == 'new' %}Nouvelle Fiche{% elseif mode == 'edit' %}Modifier{% else %}{{ item.nom }}{% endif %} — {{ voie == 'solaire' ? '☀️ Solaire' : '🌙 Lunaire' }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+
+        {% if voie == 'solaire' %}
+        :root { --c1:#fff8d0; --c2:#f5d060; --c3:#c9a84c; --c4:#7a5c1e; --c5:#3b2a0a; --c6:#1a0f00; --text:#f5e6a3; }
+        body { background:var(--c6); color:var(--text); }
+        .bg-fixed { position:fixed; inset:0; z-index:0; background:radial-gradient(ellipse 80% 50% at 15% 0%,#f5d06018 0%,transparent 55%),linear-gradient(170deg,#2a1a05 0%,#1a0f00 40%,#0a0600 100%); }
+        .orb { position:fixed; width:350px; height:350px; border-radius:50%; top:-120px; right:-80px; z-index:1; background:radial-gradient(circle at 35% 35%,#fff8d0,#f5d060 35%,#c9a84c 60%,#7a5c1e 85%,transparent 100%); box-shadow:0 0 60px #f5d06020; }
+        .fiche { background:linear-gradient(145deg,rgba(59,42,10,0.5) 0%,rgba(26,15,0,0.92) 100%); border:1px solid #c9a84c25; }
+        .fiche::before { background:linear-gradient(90deg,transparent,var(--c3),transparent); }
+        .fiche-corner { border-color:#c9a84c40 !important; }
+        label { color:var(--c3); }
+        input,select,textarea { background:rgba(59,42,10,0.4); border-color:#c9a84c25; color:var(--text); }
+        input:focus,select:focus,textarea:focus { border-color:#c9a84c60; box-shadow:0 0 0 2px #c9a84c12; }
+        .show-block { background:rgba(59,42,10,0.3); border:1px solid #c9a84c15; }
+        .show-label { color:var(--c4); }
+        .show-label::after { background:linear-gradient(90deg,#c9a84c20,transparent); }
+        .show-value { color:#d4bc7a; }
+        .fiche-divider { background:linear-gradient(90deg,var(--c3),transparent); }
+        .btn-save { background:linear-gradient(135deg,#c9a84c,#7a5c1e); color:#fff8d0; border:none; }
+        .btn-edit { color:var(--c3); border:1px solid #c9a84c40; }
+        .header-title { color:var(--c3); }
+        .btn-back { color:var(--c4); border-color:#7a5c1e30; }
+        .btn-back:hover { color:var(--c3); }
+        header { background:rgba(26,15,0,0.88); border-bottom:1px solid #c9a84c15; }
+        .fiche-eyebrow { color:var(--c4); }
+        .show-nom { color:var(--c2); }
+        .show-type { color:var(--c4); }
+        {% else %}
+        :root { --c1:#f0f4ff; --c2:#c8d4f0; --c3:#8a94b0; --c4:#3a4060; --c5:#1a2040; --c6:#0d1020; --text:#c8d4f0; }
+        body { background:var(--c6); color:var(--text); }
+        .bg-fixed { position:fixed; inset:0; z-index:0; background:radial-gradient(ellipse 70% 50% at 20% 0%,#2a0a4a20 0%,transparent 55%),linear-gradient(170deg,#0f0820 0%,#0d1020 40%,#060810 100%); }
+        .orb { position:fixed; width:350px; height:350px; border-radius:50%; top:-120px; right:-80px; z-index:1; background:radial-gradient(circle at 40% 35%,#f0f4ff,#c8d4f0 40%,#8a94b0 65%,#3a4060 85%,transparent 100%); box-shadow:0 0 50px #c8d4f015; }
+        .fiche { background:linear-gradient(145deg,rgba(26,32,64,0.5) 0%,rgba(13,16,32,0.92) 100%); border:1px solid #8a94b020; }
+        .fiche::before { background:linear-gradient(90deg,transparent,var(--c3),transparent); }
+        .fiche-corner { border-color:#8a94b040 !important; }
+        label { color:var(--c3); }
+        input,select,textarea { background:rgba(26,32,64,0.4); border-color:#8a94b020; color:var(--text); }
+        input:focus,select:focus,textarea:focus { border-color:#8a94b050; box-shadow:0 0 0 2px #8a94b010; }
+        .show-block { background:rgba(26,32,64,0.3); border:1px solid #8a94b012; }
+        .show-label { color:var(--c4); }
+        .show-label::after { background:linear-gradient(90deg,#8a94b018,transparent); }
+        .show-value { color:#8a9ab8; }
+        .fiche-divider { background:linear-gradient(90deg,var(--c3),transparent); }
+        .btn-save { background:linear-gradient(135deg,#3a4060,#1a2040); color:var(--c2); border:1px solid #8a94b030; }
+        .btn-edit { color:var(--c3); border:1px solid #8a94b030; }
+        .header-title { color:var(--c3); }
+        .btn-back { color:var(--c4); border-color:#3a406030; }
+        .btn-back:hover { color:var(--c3); }
+        header { background:rgba(13,16,32,0.88); border-bottom:1px solid #8a94b015; }
+        .fiche-eyebrow { color:var(--c4); }
+        .show-nom { color:var(--c2); }
+        .show-type { color:var(--c4); }
+        {% endif %}
+
+        body { min-height:100vh; font-family:'EB Garamond',serif; }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+        .page { position:relative; z-index:10; max-width:900px; margin:0 auto; padding:0 2rem 4rem; }
+        header { position:sticky; top:0; z-index:100; display:flex; align-items:center; gap:1rem; padding:1.2rem 2rem; margin:0 -2rem; backdrop-filter:blur(12px); }
+        .btn-back { font-family:'Cinzel',serif; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; text-decoration:none; padding:0.4rem 0.8rem; border-radius:2px; transition:all 0.3s; }
+        .header-title { font-family:'Cinzel Decorative',serif; font-size:0.9rem; }
+
+        .fiche { margin-top:3rem; border-radius:3px; padding:3rem; position:relative; overflow:hidden; animation:fadeUp 0.8s ease both; }
+        .fiche::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; }
+        .fiche-corner { position:absolute; width:50px; height:50px; }
+        .fiche-corner.tl { top:12px; left:12px; border-top:1px solid; border-left:1px solid; }
+        .fiche-corner.br { bottom:12px; right:12px; border-bottom:1px solid; border-right:1px solid; }
+
+        .fiche-header { text-align:center; margin-bottom:2.5rem; }
+        .fiche-icon { font-size:3rem; margin-bottom:0.5rem; display:block; }
+        .fiche-eyebrow { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.35em; text-transform:uppercase; }
+        .show-nom { font-family:'Cinzel Decorative',serif; font-size:2rem; text-shadow:0 0 20px rgba(0,0,0,0.3); }
+        .show-type { font-family:'Cinzel',serif; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; margin-top:0.3rem; }
+
+        .show-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:2rem; }
+        .show-block { padding:1.2rem; border-radius:2px; }
+        .show-block.full { grid-column:1/-1; }
+        .show-label { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.25em; text-transform:uppercase; margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem; }
+        .show-label::after { content:''; flex:1; height:1px; }
+        .show-value { font-size:0.95rem; line-height:1.7; font-style:italic; }
+
+        .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+        .form-group { display:flex; flex-direction:column; gap:0.5rem; }
+        .form-group.full { grid-column:1/-1; }
+        label { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.25em; text-transform:uppercase; }
+        input[type=text],select,textarea { width:100%; padding:0.8rem 1rem; border-radius:2px; font-family:'EB Garamond',serif; font-size:1rem; outline:none; transition:border-color 0.3s,box-shadow 0.3s; }
+        input::placeholder,textarea::placeholder { opacity:0.3; }
+        select option { background:#1a0f00; }
+        textarea { resize:vertical; min-height:100px; }
+
+        .fiche-divider { width:60px; height:1px; margin:2rem auto; }
+        .fiche-actions { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-top:2.5rem; }
+        .btn-save { font-family:'Cinzel',serif; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; padding:0.8rem 2rem; border-radius:2px; cursor:pointer; transition:all 0.3s; }
+        .btn-save:hover { transform:translateY(-2px); }
+        .btn-edit { font-family:'Cinzel',serif; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; padding:0.8rem 1.5rem; background:transparent; border-radius:2px; text-decoration:none; transition:all 0.3s; }
+        .btn-delete { font-family:'Cinzel',serif; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; padding:0.8rem 1.5rem; background:transparent; color:#c94c4c; border:1px solid #c94c4c30; border-radius:2px; cursor:pointer; transition:all 0.3s; }
+        .btn-delete:hover { background:#c94c4c10; }
+
+        @media(max-width:600px) { .form-grid,.show-grid{grid-template-columns:1fr} .fiche{padding:2rem 1.5rem} }
+    </style>
+</head>
+<body>
+<div class="bg-fixed"></div>
+<div class="orb"></div>
+
+<div class="page">
+    <header>
+        <a href="{{ path('pp_index', {onglet: categorie}) }}" class="btn-back">← Plantes & Pierres</a>
+        <div class="header-title">
+            {{ voie == 'solaire' ? '☀️' : '🌙' }}
+            {% if mode == 'new' %}Nouvelle {{ categorie == 'plante' ? 'Plante' : 'Pierre' }}
+            {% elseif mode == 'edit' %}Modifier
+            {% else %}{{ item.nom }}{% endif %}
+        </div>
+    </header>
+
+    <div class="fiche">
+        <div class="fiche-corner tl"></div>
+        <div class="fiche-corner br"></div>
+
+        <div class="fiche-header">
+            <span class="fiche-icon">{{ categorie == 'plante' ? (voie == 'solaire' ? '🌿' : '🌙') : (voie == 'solaire' ? '💎' : '🔮') }}</span>
+            <div class="fiche-eyebrow">{{ categorie == 'plante' ? 'Plante sacrée' : 'Pierre sacrée' }} · Voie {{ voie == 'solaire' ? 'Solaire' : 'Lunaire' }}</div>
+        </div>
+
+        {% if mode == 'show' %}
+            <div style="text-align:center">
+                <div class="show-nom">{{ item.nom }}</div>
+                {% if item.origine %}<div class="show-type">{{ item.origine }}</div>{% endif %}
+            </div>
+
+            <div class="show-grid">
+                {% if item.description %}
+                <div class="show-block full">
+                    <div class="show-label">Description</div>
+                    <div class="show-value">{{ item.description|nl2br }}</div>
+                </div>
+                {% endif %}
+
+                {% if item.proprietesMagiques %}
+                <div class="show-block">
+                    <div class="show-label">Propriétés Magiques</div>
+                    <div class="show-value">{{ item.proprietesMagiques|nl2br }}</div>
+                </div>
+                {% endif %}
+
+                {% if item.proprietesMedicinales %}
+                <div class="show-block">
+                    <div class="show-label">Propriétés Médicinales</div>
+                    <div class="show-value">{{ item.proprietesMedicinales|nl2br }}</div>
+                </div>
+                {% endif %}
+
+                {% if item.correspondances %}
+                <div class="show-block full">
+                    <div class="show-label">Correspondances</div>
+                    <div class="show-value">{{ item.correspondances }}</div>
+                </div>
+                {% endif %}
+
+                {% if item.utilisationRituel %}
+                <div class="show-block full">
+                    <div class="show-label">Utilisation en Rituel</div>
+                    <div class="show-value">{{ item.utilisationRituel|nl2br }}</div>
+                </div>
+                {% endif %}
+
+                {% if item.danger %}
+                <div class="show-block full">
+                    <div class="show-label">⚠ Danger / Précautions</div>
+                    <div class="show-value">{{ item.danger|nl2br }}</div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="fiche-divider"></div>
+            <div class="fiche-actions">
+                <a href="{{ path('pp_edit', {id: item.id}) }}" class="btn-edit">✎ Modifier</a>
+                <form method="post" action="{{ path('pp_delete', {id: item.id}) }}" onsubmit="return confirm('Supprimer cette fiche ?')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete'~item.id) }}">
+                    <button type="submit" class="btn-delete">✕ Supprimer</button>
+                </form>
+            </div>
+
+        {% else %}
+            <form method="post" action="{{ mode == 'new' ? path('pp_new', {categorie: categorie}) : path('pp_edit', {id: item.id}) }}">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>✦ Nom *</label>
+                        <input type="text" name="nom" value="{{ item.nom }}" placeholder="Ex: {{ categorie == 'plante' ? 'Armoise, Sureau, Gui...' : 'Améthyste, Quartz rose, Obsidienne...' }}" required>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Origine / Habitat</label>
+                        <input type="text" name="origine" value="{{ item.origine }}" placeholder="Ex: {{ categorie == 'plante' ? 'Europe tempérée, forêts de chênes...' : 'Brésil, Andes, Himalaya...' }}">
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Description</label>
+                        <textarea name="description" placeholder="Description générale...">{{ item.description }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Propriétés Magiques</label>
+                        <textarea name="proprietes_magiques" placeholder="Protection, divination, amour...">{{ item.proprietesMagiques }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Propriétés Médicinales</label>
+                        <textarea name="proprietes_medicinales" placeholder="Vertus thérapeutiques...">{{ item.proprietesMedicinales }}</textarea>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Correspondances (séparées par virgules)</label>
+                        <input type="text" name="correspondances" value="{{ item.correspondances }}" placeholder="Ex: Lune, Eau, Automne, Vénus, Samhain">
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Utilisation en Rituel</label>
+                        <textarea name="utilisation_rituel" placeholder="Comment l'utiliser dans les rituels, sorts...">{{ item.utilisationRituel }}</textarea>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>⚠ Danger / Précautions</label>
+                        <textarea name="danger" placeholder="Toxicité, contre-indications, précautions...">{{ item.danger }}</textarea>
+                    </div>
+                </div>
+
+                <div class="fiche-divider"></div>
+                <div class="fiche-actions">
+                    <button type="submit" class="btn-save">✦ Sauvegarder</button>
+                    <a href="{{ path('pp_index', {onglet: categorie}) }}" class="btn-edit">Annuler</a>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+</div>
+</body>
+</html>

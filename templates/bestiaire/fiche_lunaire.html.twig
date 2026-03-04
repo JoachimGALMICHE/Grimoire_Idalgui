@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if mode == 'new' %}Nouvelle Fiche{% elseif mode == 'edit' %}Modifier{% else %}{{ creature.nom }}{% endif %} — Bestiaire Lunaire</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+        :root { --s1:#f0f4ff; --s2:#c8d4f0; --s3:#8a94b0; --s4:#3a4060; --s5:#1a2040; --s6:#0d1020; }
+        body { min-height:100vh; font-family:'EB Garamond',serif; background:var(--s6); color:var(--s2); }
+
+        .bg-fixed {
+            position:fixed; inset:0; z-index:0;
+            background:radial-gradient(ellipse 70% 50% at 20% 0%, #2a0a4a20 0%, transparent 55%),
+                linear-gradient(170deg, #0f0820 0%, #0d1020 40%, #060810 100%);
+        }
+        .stars { position:fixed; inset:0; z-index:0; background-image: radial-gradient(1px 1px at 8% 12%,#fff 0%,transparent 100%), radial-gradient(1.5px 1.5px at 35% 25%,#eef 0%,transparent 100%), radial-gradient(1px 1px at 65% 8%,#fff 0%,transparent 100%), radial-gradient(1px 1px at 80% 60%,#dde 0%,transparent 100%), radial-gradient(2px 2px at 92% 30%,#fff 0%,transparent 100%), radial-gradient(1px 1px at 20% 85%,#eef 0%,transparent 100%); opacity:0.6; }
+        .moon-orb { position:fixed; width:320px; height:320px; border-radius:50%; top:-110px; right:-80px; z-index:1; background:radial-gradient(circle at 40% 35%,#f0f4ff,#c8d4f0 40%,#8a94b0 65%,#3a4060 85%,transparent 100%); box-shadow:0 0 50px #c8d4f015; }
+
+        .page { position:relative; z-index:10; max-width:900px; margin:0 auto; padding:0 2rem 4rem; }
+
+        header { position:sticky; top:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:1.2rem 2rem; margin:0 -2rem; background:rgba(13,16,32,0.88); backdrop-filter:blur(12px); border-bottom:1px solid #8a94b015; }
+        .header-left { display:flex; align-items:center; gap:1rem; }
+        .btn-back { font-family:'Cinzel',serif; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--s4); text-decoration:none; padding:0.4rem 0.8rem; border:1px solid #3a406030; border-radius:2px; transition:all 0.3s; }
+        .btn-back:hover { color:var(--s3); border-color:#8a94b050; }
+        .header-title { font-family:'Cinzel Decorative',serif; font-size:0.9rem; color:var(--s3); }
+
+        .fiche { margin-top:3rem; background:linear-gradient(145deg,rgba(26,32,64,0.5) 0%,rgba(13,16,32,0.92) 100%); border:1px solid #8a94b020; border-radius:3px; padding:3rem; position:relative; overflow:hidden; animation:fadeUp 0.8s ease both; }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+        .fiche::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:linear-gradient(90deg,transparent,var(--s3),transparent); }
+
+        .fiche-corner { position:absolute; width:50px; height:50px; }
+        .fiche-corner.tl { top:12px; left:12px; border-top:1px solid #8a94b040; border-left:1px solid #8a94b040; }
+        .fiche-corner.br { bottom:12px; right:12px; border-bottom:1px solid #8a94b040; border-right:1px solid #8a94b040; }
+
+        .fiche-header { text-align:center; margin-bottom:2.5rem; }
+        .fiche-icon { font-size:3rem; margin-bottom:0.5rem; display:block; filter:drop-shadow(0 0 10px #8a94b035); }
+        .fiche-eyebrow { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.35em; text-transform:uppercase; color:var(--s4); margin-bottom:0.5rem; }
+
+        .show-nom { font-family:'Cinzel Decorative',serif; font-size:2rem; color:var(--s2); text-shadow:0 0 20px #c8d4f020; }
+        .show-type { font-family:'Cinzel',serif; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--s4); margin-top:0.3rem; }
+
+        .show-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:2rem; }
+        .show-block { padding:1.2rem; background:rgba(26,32,64,0.3); border:1px solid #8a94b012; border-radius:2px; }
+        .show-block.full { grid-column:1/-1; }
+        .show-label { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--s4); margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem; }
+        .show-label::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,#8a94b018,transparent); }
+        .show-value { font-size:0.95rem; color:#8a9ab8; line-height:1.7; font-style:italic; }
+
+        .danger-badge { display:inline-block; padding:0.3rem 0.8rem; border-radius:2px; font-family:'Cinzel',serif; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; }
+        .danger-faible { background:#1a3a1a; color:#6ab06a; border:1px solid #2a5a2a; }
+        .danger-modere { background:#3a2a00; color:#c9a84c; border:1px solid #5a4a10; }
+        .danger-eleve  { background:#3a1a00; color:#d4804c; border:1px solid #5a3010; }
+        .danger-extreme{ background:#2a0a0a; color:#c94c4c; border:1px solid #5a1a1a; }
+
+        .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+        .form-group { display:flex; flex-direction:column; gap:0.5rem; }
+        .form-group.full { grid-column:1/-1; }
+
+        label { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--s3); }
+        input[type=text], select, textarea { width:100%; padding:0.8rem 1rem; background:rgba(26,32,64,0.4); border:1px solid #8a94b020; border-radius:2px; font-family:'EB Garamond',serif; font-size:1rem; color:var(--s2); outline:none; transition:border-color 0.3s,box-shadow 0.3s; }
+        input:focus, select:focus, textarea:focus { border-color:#8a94b050; box-shadow:0 0 0 2px #8a94b010; }
+        input::placeholder, textarea::placeholder { opacity:0.3; }
+        select option { background:#0d1020; }
+        textarea { resize:vertical; min-height:100px; }
+
+        .fiche-divider { width:60px; height:1px; background:linear-gradient(90deg,var(--s3),transparent); margin:2rem auto; }
+
+        .fiche-actions { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-top:2.5rem; }
+        .btn-save { font-family:'Cinzel',serif; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; padding:0.8rem 2rem; background:linear-gradient(135deg,#3a4060,#1a2040); color:var(--s2); border:1px solid #8a94b030; border-radius:2px; cursor:pointer; box-shadow:0 4px 20px #8a94b015; transition:all 0.3s; }
+        .btn-save:hover { transform:translateY(-2px); box-shadow:0 8px 30px #8a94b030; }
+        .btn-edit { font-family:'Cinzel',serif; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; padding:0.8rem 1.5rem; background:transparent; color:var(--s3); border:1px solid #8a94b030; border-radius:2px; text-decoration:none; transition:all 0.3s; }
+        .btn-edit:hover { background:#8a94b010; border-color:#8a94b060; }
+        .btn-delete { font-family:'Cinzel',serif; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; padding:0.8rem 1.5rem; background:transparent; color:#c94c4c; border:1px solid #c94c4c30; border-radius:2px; cursor:pointer; transition:all 0.3s; }
+        .btn-delete:hover { background:#c94c4c10; border-color:#c94c4c60; }
+
+        @media(max-width:600px) { .form-grid,.show-grid{grid-template-columns:1fr} .fiche{padding:2rem 1.5rem} }
+    </style>
+</head>
+<body>
+<div class="bg-fixed"></div>
+<div class="stars"></div>
+<div class="moon-orb"></div>
+
+<div class="page">
+    <header>
+        <div class="header-left">
+            <a href="{{ path('bestiaire_index') }}" class="btn-back">← Bestiaire</a>
+            <div class="header-title">🌙 {% if mode == 'new' %}Nouvelle Entité{% elseif mode == 'edit' %}Modifier{% else %}{{ creature.nom }}{% endif %}</div>
+        </div>
+    </header>
+
+    <div class="fiche">
+        <div class="fiche-corner tl"></div>
+        <div class="fiche-corner br"></div>
+
+        <div class="fiche-header">
+            <span class="fiche-icon">🐺</span>
+            <div class="fiche-eyebrow">Bestiaire Lunaire · Voie du Chamanisme</div>
+        </div>
+
+        {% if mode == 'show' %}
+            <div style="text-align:center">
+                <div class="show-nom">{{ creature.nom }}</div>
+                {% if creature.type %}<div class="show-type">{{ creature.type }}</div>{% endif %}
+            </div>
+
+            <div class="show-grid">
+                {% if creature.origine %}
+                <div class="show-block">
+                    <div class="show-label">Origine / Tradition</div>
+                    <div class="show-value">{{ creature.origine }}</div>
+                </div>
+                {% endif %}
+
+                {% if creature.danger %}
+                <div class="show-block">
+                    <div class="show-label">Niveau de Danger</div>
+                    <div class="show-value">
+                        <span class="danger-badge danger-{{ creature.danger|lower|replace({' ':'-'}) }}">{{ creature.danger }}</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if creature.description %}
+                <div class="show-block full">
+                    <div class="show-label">Description</div>
+                    <div class="show-value">{{ creature.description|nl2br }}</div>
+                </div>
+                {% endif %}
+
+                {% if creature.pouvoirs %}
+                <div class="show-block full">
+                    <div class="show-label">Pouvoirs & Capacités</div>
+                    <div class="show-value">{{ creature.pouvoirs|nl2br }}</div>
+                </div>
+                {% endif %}
+
+                {% if creature.affinites %}
+                <div class="show-block full">
+                    <div class="show-label">Affinités Élémentaires</div>
+                    <div class="show-value">{{ creature.affinites }}</div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="fiche-divider"></div>
+
+            <div class="fiche-actions">
+                <a href="{{ path('bestiaire_edit', {id: creature.id}) }}" class="btn-edit">✎ Modifier</a>
+                <form method="post" action="{{ path('bestiaire_delete', {id: creature.id}) }}" onsubmit="return confirm('Supprimer cette entité ?')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete'~creature.id) }}">
+                    <button type="submit" class="btn-delete">✕ Supprimer</button>
+                </form>
+            </div>
+
+        {% else %}
+            <form method="post" action="{{ mode == 'new' ? path('bestiaire_new') : path('bestiaire_edit', {id: creature.id}) }}">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label for="nom">✦ Nom de l'Entité *</label>
+                        <input type="text" id="nom" name="nom" value="{{ creature.nom }}" placeholder="Ex: L'Esprit du Loup Blanc" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="type">Type / Catégorie</label>
+                        <select id="type" name="type">
+                            <option value="">— Choisir —</option>
+                            {% set types = ['Esprit', 'Animal totem', 'Ancêtre', 'Entité', 'Gardien', 'Ombre', 'Passeur', 'Autre'] %}
+                            {% for t in types %}
+                                <option value="{{ t }}" {% if creature.type == t %}selected{% endif %}>{{ t }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="danger">Niveau de Danger</label>
+                        <select id="danger" name="danger">
+                            <option value="">— Choisir —</option>
+                            {% set niveaux = ['Faible', 'Modéré', 'Élevé', 'Extrême'] %}
+                            {% for n in niveaux %}
+                                <option value="{{ n }}" {% if creature.danger == n %}selected{% endif %}>{{ n }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="origine">Origine / Tradition</label>
+                        <input type="text" id="origine" name="origine" value="{{ creature.origine }}" placeholder="Ex: Chamanisme sibérien, Tradition lakota...">
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" placeholder="Décris cette entité, son aspect dans le monde spirituel...">{{ creature.description }}</textarea>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="pouvoirs">Pouvoirs & Capacités</label>
+                        <textarea id="pouvoirs" name="pouvoirs" placeholder="Quels sont ses pouvoirs, dons ou messages ?">{{ creature.pouvoirs }}</textarea>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="affinites">Affinités Élémentaires</label>
+                        <input type="text" id="affinites" name="affinites" value="{{ creature.affinites }}" placeholder="Ex: Eau, Lune, Nuit, Vent du nord">
+                    </div>
+                </div>
+
+                <div class="fiche-divider"></div>
+
+                <div class="fiche-actions">
+                    <button type="submit" class="btn-save">✦ Sauvegarder la Fiche</button>
+                    <a href="{{ path('bestiaire_index') }}" class="btn-edit">Annuler</a>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+</div>
+</body>
+</html>

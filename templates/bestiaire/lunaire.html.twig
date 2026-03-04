@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bestiaire Lunaire — Grimoire Idalgui</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --s1:#f0f4ff; --s2:#c8d4f0; --s3:#8a94b0; --s4:#3a4060; --s5:#1a2040; --s6:#0d1020; }
+        body { min-height:100vh; font-family:'EB Garamond',serif; background:var(--s6); color:var(--s2); overflow-x:hidden; }
+
+        .bg-fixed {
+            position:fixed; inset:0; z-index:0;
+            background:
+                radial-gradient(ellipse 70% 50% at 20% 0%, #2a0a4a25 0%, transparent 55%),
+                radial-gradient(ellipse 50% 60% at 85% 90%, #1a204025 0%, transparent 60%),
+                linear-gradient(170deg, #0f0820 0%, #0d1020 40%, #060810 100%);
+        }
+        .stars {
+            position:fixed; inset:0; z-index:0;
+            background-image:
+                radial-gradient(1px 1px at 8% 12%, #fff 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 22% 38%, #eef 0%, transparent 100%),
+                radial-gradient(1px 1px at 45% 8%, #fff 0%, transparent 100%),
+                radial-gradient(1px 1px at 68% 55%, #dde 0%, transparent 100%),
+                radial-gradient(2px 2px at 80% 22%, #fff 0%, transparent 100%),
+                radial-gradient(1px 1px at 92% 68%, #eef 0%, transparent 100%),
+                radial-gradient(1px 1px at 15% 78%, #fff 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 55% 90%, #dde 0%, transparent 100%);
+            opacity:0.7;
+        }
+        .moon-orb {
+            position:fixed; width:380px; height:380px; border-radius:50%;
+            top:-130px; right:-90px; z-index:1;
+            background:radial-gradient(circle at 40% 35%, #f0f4ff, #c8d4f0 40%, #8a94b0 65%, #3a4060 85%, transparent 100%);
+            box-shadow:0 0 60px #c8d4f018, 0 0 150px #8a94b008;
+            animation:moonGlow 10s ease-in-out infinite;
+        }
+        @keyframes moonGlow { 0%,100%{box-shadow:0 0 60px #c8d4f018,0 0 150px #8a94b008} 50%{box-shadow:0 0 100px #c8d4f025,0 0 250px #8a94b012} }
+
+        .page { position:relative; z-index:10; max-width:1200px; margin:0 auto; padding:0 2rem 4rem; }
+
+        header {
+            position:sticky; top:0; z-index:100;
+            display:flex; align-items:center; justify-content:space-between;
+            padding:1.2rem 2rem; margin:0 -2rem;
+            background:rgba(13,16,32,0.85); backdrop-filter:blur(12px);
+            border-bottom:1px solid #8a94b015;
+        }
+        .header-left { display:flex; align-items:center; gap:1rem; }
+        .btn-back {
+            font-family:'Cinzel',serif; font-size:0.65rem; letter-spacing:0.2em;
+            text-transform:uppercase; color:var(--s4); text-decoration:none;
+            padding:0.4rem 0.8rem; border:1px solid #3a406030; border-radius:2px; transition:all 0.3s;
+        }
+        .btn-back:hover { color:var(--s3); border-color:#8a94b050; }
+        .header-title { font-family:'Cinzel Decorative',serif; font-size:1rem; color:var(--s3); }
+        .header-sub { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--s4); }
+
+        .hero { padding:3rem 0 2rem; animation:fadeUp 0.8s ease both; }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+        .hero-eyebrow {
+            font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.4em;
+            text-transform:uppercase; color:var(--s4); margin-bottom:0.8rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .hero-eyebrow::before, .hero-eyebrow::after { content:''; flex:0 0 30px; height:1px; background:var(--s4); }
+        .hero-title { font-family:'Cinzel Decorative',serif; font-size:2.5rem; color:var(--s2); margin-bottom:0.3rem; text-shadow:0 0 30px #c8d4f020; }
+        .hero-count { font-family:'Cinzel',serif; font-size:0.7rem; letter-spacing:0.2em; color:var(--s4); text-transform:uppercase; }
+
+        .actions-bar { display:flex; align-items:center; gap:1rem; margin-bottom:2.5rem; flex-wrap:wrap; animation:fadeUp 0.8s ease 0.1s both; }
+
+        .search-wrap { position:relative; flex:1; min-width:200px; }
+        .search-input {
+            width:100%; padding:0.7rem 1rem 0.7rem 2.5rem;
+            background:rgba(26,32,64,0.4); border:1px solid #8a94b020;
+            border-radius:2px; font-family:'EB Garamond',serif; font-size:0.95rem;
+            color:var(--s2); outline:none; transition:border-color 0.3s, box-shadow 0.3s;
+        }
+        .search-input:focus { border-color:#8a94b050; box-shadow:0 0 0 2px #8a94b012; }
+        .search-input::placeholder { opacity:0.35; }
+        .search-icon { position:absolute; left:0.8rem; top:50%; transform:translateY(-50%); color:var(--s4); }
+
+        .btn-new {
+            display:flex; align-items:center; gap:0.5rem;
+            font-family:'Cinzel',serif; font-size:0.7rem; letter-spacing:0.15em;
+            text-transform:uppercase; text-decoration:none; padding:0.7rem 1.4rem;
+            background:linear-gradient(135deg,#3a4060,#1a2040);
+            color:var(--s2); border:1px solid #8a94b030; border-radius:2px;
+            box-shadow:0 4px 20px #8a94b015; transition:all 0.3s; white-space:nowrap;
+        }
+        .btn-new:hover { transform:translateY(-2px); box-shadow:0 8px 30px #8a94b030; border-color:#8a94b060; }
+
+        .filters { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:2rem; animation:fadeUp 0.8s ease 0.15s both; }
+        .filter-btn {
+            font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.15em; text-transform:uppercase;
+            padding:0.3rem 0.8rem; background:transparent; border:1px solid #3a406025;
+            color:var(--s4); border-radius:1px; cursor:pointer; transition:all 0.3s;
+        }
+        .filter-btn:hover, .filter-btn.active { background:#8a94b012; border-color:#8a94b045; color:var(--s3); }
+
+        .creatures-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.2rem; animation:fadeUp 0.8s ease 0.2s both; }
+
+        .creature-card {
+            background:linear-gradient(145deg,rgba(26,32,64,0.55) 0%,rgba(13,16,32,0.85) 100%);
+            border:1px solid #8a94b018; border-radius:3px; padding:1.5rem;
+            position:relative; overflow:hidden; transition:all 0.4s cubic-bezier(.4,0,.2,1);
+            text-decoration:none; color:inherit; display:block;
+        }
+        .creature-card::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:linear-gradient(90deg,transparent,var(--s3),transparent); }
+        .creature-card:hover { transform:translateY(-4px); border-color:#8a94b038; box-shadow:0 12px 40px #00000060, 0 0 20px #8a94b006; }
+
+        .card-voie { font-family:'Cinzel',serif; font-size:0.55rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--s4); background:#8a94b010; border:1px solid #8a94b018; padding:0.15rem 0.5rem; border-radius:1px; display:inline-block; margin-bottom:0.8rem; }
+        .card-nom { font-family:'Cinzel Decorative',serif; font-size:1.1rem; color:var(--s2); margin-bottom:0.3rem; }
+        .card-type { font-family:'Cinzel',serif; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--s4); margin-bottom:0.8rem; }
+        .card-desc { font-size:0.88rem; color:#8a9ab8; line-height:1.6; font-style:italic; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+
+        .card-danger { position:absolute; top:1rem; right:1rem; padding:0.2rem 0.5rem; border-radius:1px; font-family:'Cinzel',serif; font-size:0.55rem; letter-spacing:0.1em; text-transform:uppercase; }
+        .danger-faible { background:#1a3a1a; color:#6ab06a; border:1px solid #2a5a2a; }
+        .danger-modere { background:#3a2a00; color:#c9a84c; border:1px solid #5a4a10; }
+        .danger-eleve  { background:#3a1a00; color:#d4804c; border:1px solid #5a3010; }
+        .danger-extreme{ background:#2a0a0a; color:#c94c4c; border:1px solid #5a1a1a; }
+
+        .card-footer { display:flex; justify-content:space-between; align-items:center; margin-top:1rem; padding-top:0.8rem; border-top:1px solid #8a94b012; }
+        .card-affinites { font-size:0.75rem; color:var(--s4); font-style:italic; }
+        .card-date { font-family:'Cinzel',serif; font-size:0.55rem; letter-spacing:0.1em; color:#1a2040; }
+
+        .empty-state { grid-column:1/-1; text-align:center; padding:5rem 2rem; animation:fadeUp 0.8s ease 0.3s both; }
+        .empty-icon { font-size:4rem; margin-bottom:1.5rem; opacity:0.3; }
+        .empty-title { font-family:'Cinzel Decorative',serif; font-size:1.2rem; color:var(--s4); margin-bottom:0.8rem; }
+        .empty-text { font-size:0.9rem; color:#1a2040; font-style:italic; margin-bottom:2rem; }
+    </style>
+</head>
+<body>
+<div class="bg-fixed"></div>
+<div class="stars"></div>
+<div class="moon-orb"></div>
+
+<div class="page">
+    <header>
+        <div class="header-left">
+            <a href="{{ path('app_home') }}" class="btn-back">← Grimoire</a>
+            <div>
+                <div class="header-title">🌙 Bestiaire Lunaire</div>
+                <div class="header-sub">Esprits & animaux totem</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="hero">
+        <div class="hero-eyebrow">Voie Lunaire</div>
+        <h1 class="hero-title">Bestiaire</h1>
+        <p class="hero-count">{{ creatures|length }} entité{% if creatures|length > 1 %}s{% endif %} répertoriée{% if creatures|length > 1 %}s{% endif %}</p>
+    </div>
+
+    <div class="actions-bar">
+        <form method="get" action="{{ path('bestiaire_index') }}" style="flex:1;display:flex;gap:1rem;flex-wrap:wrap;">
+            <div class="search-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" name="q" value="{{ search }}" class="search-input" placeholder="Rechercher une entité...">
+            </div>
+        </form>
+        <a href="{{ path('bestiaire_new') }}" class="btn-new">✦ Nouvelle Fiche</a>
+    </div>
+
+    <div class="filters">
+        <button class="filter-btn active" onclick="filterCards('all')">Toutes</button>
+        <button class="filter-btn" onclick="filterCards('Esprit')">Esprits</button>
+        <button class="filter-btn" onclick="filterCards('Animal totem')">Animaux totem</button>
+        <button class="filter-btn" onclick="filterCards('Ancêtre')">Ancêtres</button>
+        <button class="filter-btn" onclick="filterCards('Entité')">Entités</button>
+        <button class="filter-btn" onclick="filterCards('Gardien')">Gardiens</button>
+    </div>
+
+    <div class="creatures-grid" id="grid">
+        {% if creatures is empty %}
+            <div class="empty-state">
+                <div class="empty-icon">🌙</div>
+                <div class="empty-title">Le bestiaire est vierge</div>
+                <p class="empty-text">Les esprits n'ont pas encore été répertoriés.<br>Commence par créer ta première fiche.</p>
+                <a href="{{ path('bestiaire_new') }}" class="btn-new" style="display:inline-flex">✦ Créer la première fiche</a>
+            </div>
+        {% else %}
+            {% for creature in creatures %}
+            <a href="{{ path('bestiaire_show', {id: creature.id}) }}" class="creature-card" data-type="{{ creature.type }}">
+                {% if creature.danger %}
+                    <span class="card-danger danger-{{ creature.danger|lower|replace({' ':'-'}) }}">{{ creature.danger }}</span>
+                {% endif %}
+                <span class="card-voie">{{ creature.type ?: 'Entité' }}</span>
+                <div class="card-nom">{{ creature.nom }}</div>
+                {% if creature.origine %}<div class="card-type">{{ creature.origine }}</div>{% endif %}
+                {% if creature.description %}<p class="card-desc">{{ creature.description }}</p>{% endif %}
+                <div class="card-footer">
+                    <span class="card-affinites">{{ creature.affinites ?: '—' }}</span>
+                    <span class="card-date">{{ creature.createdAt|date('d/m/Y') }}</span>
+                </div>
+            </a>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function filterCards(type) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        document.querySelectorAll('.creature-card').forEach(card => {
+            card.style.display = (type === 'all' || card.dataset.type === type) ? 'block' : 'none';
+        });
+    }
+</script>
+</body>
+</html>

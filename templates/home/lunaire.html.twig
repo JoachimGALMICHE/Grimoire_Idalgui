@@ -1,8 +1,646 @@
 <!DOCTYPE html>
-<html>
-<body style="background:#0d1020; color:#c8d4f0; font-family:serif; text-align:center; padding:4rem;">
-    <h1>🌙 Bienvenue dans le Grimoire Lunaire</h1>
-    <p>Voie du Chamanisme & Néochamanisme</p>
-    <a href="{{ path('app_logout') }}" style="color:#8a94b0">Se déconnecter</a>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grimoire Lunaire — {{ app.user.username }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --silver-1: #f0f4ff;
+            --silver-2: #c8d4f0;
+            --silver-3: #8a94b0;
+            --silver-4: #3a4060;
+            --silver-5: #1a2040;
+            --silver-6: #0d1020;
+            --violet: #2a0a4a;
+            --violet-mid: #4a1a7a;
+            --violet-light: #8a4ab0;
+            --text-main: #c8d4f0;
+            --text-sub: #8a94b0;
+            --text-dim: #3a4060;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            min-height: 100vh;
+            font-family: 'EB Garamond', serif;
+            background: var(--silver-6);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* ===== BACKGROUND ===== */
+        .bg-fixed {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 20% 0%, #2a0a4a30 0%, transparent 55%),
+                radial-gradient(ellipse 60% 70% at 85% 90%, #1a204030 0%, transparent 60%),
+                radial-gradient(ellipse 40% 40% at 60% 40%, #8a94b008 0%, transparent 70%),
+                linear-gradient(170deg, #0f0820 0%, #0d1020 40%, #060810 100%);
+        }
+
+        .bg-fixed::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: 0.25;
+            pointer-events: none;
+        }
+
+        /* Étoiles */
+        .stars {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image:
+                radial-gradient(1px 1px at 8% 12%, #fff 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 18% 35%, #eef 0%, transparent 100%),
+                radial-gradient(1px 1px at 28% 8%, #fff 0%, transparent 100%),
+                radial-gradient(1px 1px at 40% 55%, #dde 0%, transparent 100%),
+                radial-gradient(2px 2px at 52% 18%, #fff 0%, transparent 100%),
+                radial-gradient(1px 1px at 63% 72%, #eef 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 72% 28%, #fff 0%, transparent 100%),
+                radial-gradient(1px 1px at 82% 48%, #dde 0%, transparent 100%),
+                radial-gradient(1px 1px at 90% 15%, #fff 0%, transparent 100%),
+                radial-gradient(1px 1px at 95% 65%, #eef 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 12% 80%, #fff 0%, transparent 100%),
+                radial-gradient(1px 1px at 35% 92%, #dde 0%, transparent 100%),
+                radial-gradient(1px 1px at 58% 88%, #fff 0%, transparent 100%),
+                radial-gradient(2px 2px at 75% 95%, #eef 0%, transparent 100%),
+                radial-gradient(1px 1px at 5% 55%, #fff 0%, transparent 100%);
+            animation: starTwinkle 6s ease-in-out infinite alternate;
+        }
+        @keyframes starTwinkle {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        /* Particules */
+        .particles { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: floatUp linear infinite;
+            opacity: 0;
+        }
+        @keyframes floatUp {
+            0%   { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            8%   { opacity: 1; }
+            92%  { opacity: 0.4; }
+            100% { transform: translateY(-10vh) rotate(540deg); opacity: 0; }
+        }
+
+        /* Lune */
+        .moon-orb {
+            position: fixed;
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            top: -140px;
+            right: -100px;
+            background: radial-gradient(circle at 40% 35%, #f0f4ff, #c8d4f0 40%, #8a94b0 65%, #3a4060 85%, transparent 100%);
+            box-shadow: 0 0 60px #c8d4f020, 0 0 150px #8a94b010;
+            z-index: 1;
+            animation: moonGlow 10s ease-in-out infinite;
+        }
+        @keyframes moonGlow {
+            0%, 100% { box-shadow: 0 0 60px #c8d4f020, 0 0 150px #8a94b010; }
+            50% { box-shadow: 0 0 100px #c8d4f030, 0 0 250px #8a94b018; }
+        }
+
+        /* Halo lunaire */
+        .moon-halo {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            top: -230px;
+            right: -190px;
+            border: 1px solid #c8d4f008;
+            box-shadow: 0 0 0 30px #c8d4f004, 0 0 0 60px #c8d4f002;
+            z-index: 0;
+            animation: haloRotate 60s linear infinite;
+        }
+        @keyframes haloRotate { to { transform: rotate(360deg); } }
+
+        /* ===== LAYOUT ===== */
+        .page { position: relative; z-index: 10; }
+
+        /* ===== HEADER ===== */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 3rem;
+            border-bottom: 1px solid #8a94b015;
+            backdrop-filter: blur(10px);
+            background: rgba(13,16,32,0.4);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-brand { display: flex; align-items: center; gap: 1rem; }
+        .header-icon { font-size: 1.8rem; animation: moonGlow 5s ease-in-out infinite; }
+
+        .header-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 0.9rem;
+            color: var(--silver-3);
+            letter-spacing: 0.05em;
+        }
+
+        .header-sub {
+            font-family: 'Cinzel', serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-top: 0.2rem;
+        }
+
+        .header-nav { display: flex; align-items: center; gap: 1.5rem; }
+
+        .header-user {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .btn-logout {
+            font-family: 'Cinzel', serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--silver-3);
+            text-decoration: none;
+            padding: 0.4rem 1rem;
+            border: 1px solid #8a94b025;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+        .btn-logout:hover { background: #8a94b010; border-color: #8a94b045; }
+
+        /* ===== HERO ===== */
+        .hero {
+            padding: 5rem 3rem 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeUp 1s ease both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-eyebrow {
+            font-family: 'Cinzel', serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .hero-eyebrow::before, .hero-eyebrow::after {
+            content: '';
+            flex: 0 0 40px;
+            height: 1px;
+            background: var(--text-dim);
+        }
+
+        .hero-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 900;
+            color: var(--silver-2);
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 40px #c8d4f025;
+        }
+
+        .hero-subtitle {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            color: var(--silver-4);
+            letter-spacing: 0.15em;
+            margin-bottom: 2.5rem;
+        }
+
+        /* ===== FICHES ===== */
+        .fiche-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+            animation: fadeUp 1s ease 0.2s both;
+        }
+
+        .fiche-card {
+            background: linear-gradient(145deg, rgba(26,32,64,0.6) 0%, rgba(13,16,32,0.85) 100%);
+            border: 1px solid #8a94b020;
+            border-radius: 3px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .fiche-card:hover {
+            transform: translateY(-3px);
+            border-color: #8a94b040;
+            box-shadow: 0 10px 40px #00000060, 0 0 20px #8a94b008;
+        }
+
+        .fiche-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--silver-3), transparent);
+        }
+
+        .fiche-card::after {
+            content: attr(data-corner);
+            position: absolute;
+            top: 10px; right: 14px;
+            font-size: 1.2rem;
+            opacity: 0.25;
+        }
+
+        .fiche-tag {
+            font-family: 'Cinzel', serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--silver-3);
+            background: #8a94b012;
+            border: 1px solid #8a94b020;
+            padding: 0.2rem 0.7rem;
+            border-radius: 1px;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .fiche-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.3rem;
+            color: var(--silver-2);
+            margin-bottom: 1rem;
+        }
+
+        .fiche-body {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: #8a9ab8;
+            font-style: italic;
+        }
+        .fiche-body p + p { margin-top: 0.8rem; }
+
+        .fiche-divider {
+            width: 40px;
+            height: 1px;
+            background: linear-gradient(90deg, var(--silver-3), transparent);
+            margin: 1.2rem 0;
+        }
+
+        .fiche-pillars {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .pillar {
+            font-family: 'Cinzel', serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            border: 1px solid #3a406025;
+            padding: 0.25rem 0.6rem;
+            border-radius: 1px;
+        }
+
+        /* ===== SÉPARATEUR ===== */
+        .section-sep {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin: 3rem 0 2rem;
+            animation: fadeUp 1s ease 0.3s both;
+        }
+        .section-sep-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #8a94b025, transparent);
+        }
+        .section-sep-text {
+            font-family: 'Cinzel', serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+        .section-sep-symbol { color: var(--silver-3); font-size: 1rem; }
+
+        /* ===== MODULES ===== */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            max-width: 1200px;
+            margin: 0 auto 5rem;
+            padding: 0 3rem;
+            animation: fadeUp 1s ease 0.4s both;
+        }
+
+        .module-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            padding: 2rem 1rem;
+            background: linear-gradient(160deg, rgba(26,32,64,0.5) 0%, rgba(13,16,32,0.75) 100%);
+            border: 1px solid #8a94b018;
+            border-radius: 3px;
+            text-decoration: none;
+            color: var(--text-main);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(.4,0,.2,1);
+            cursor: pointer;
+            min-height: 140px;
+        }
+
+        .module-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #8a94b008, transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .module-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--silver-3), transparent);
+            transform: scaleX(0);
+            transition: transform 0.4s;
+        }
+
+        .module-btn:hover {
+            transform: translateY(-5px);
+            border-color: #8a94b038;
+            box-shadow: 0 15px 40px #00000060, 0 0 30px #8a94b006;
+        }
+
+        .module-btn:hover::before { opacity: 1; }
+        .module-btn:hover::after { transform: scaleX(1); }
+
+        .module-icon {
+            font-size: 2.2rem;
+            filter: drop-shadow(0 0 8px #8a94b035);
+            transition: transform 0.4s, filter 0.4s;
+        }
+        .module-btn:hover .module-icon {
+            transform: scale(1.15) translateY(-3px);
+            filter: drop-shadow(0 0 15px #c8d4f050);
+        }
+
+        .module-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--silver-3);
+            text-align: center;
+        }
+
+        .module-desc {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-align: center;
+            font-style: italic;
+            line-height: 1.4;
+        }
+
+        .module-badge {
+            position: absolute;
+            top: 8px; right: 8px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.5rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            border: 1px solid #3a406025;
+            padding: 0.15rem 0.4rem;
+            border-radius: 1px;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid #8a94b008;
+            font-family: 'Cinzel', serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: #1a2040;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .fiche-grid { grid-template-columns: 1fr; }
+            .modules-grid { grid-template-columns: repeat(2, 1fr); padding: 0 1.5rem; }
+            header { padding: 1rem 1.5rem; }
+            .hero { padding: 3rem 1.5rem 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-fixed"></div>
+    <div class="stars"></div>
+    <div class="moon-halo"></div>
+    <div class="moon-orb"></div>
+    <div class="particles" id="particles"></div>
+
+    <div class="page">
+        <!-- HEADER -->
+        <header>
+            <div class="header-brand">
+                <span class="header-icon">🌙</span>
+                <div>
+                    <div class="header-title">Grimoire Idalgui</div>
+                    <div class="header-sub">Voie Lunaire · Chamanisme</div>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <span class="header-user">✦ {{ app.user.username }}</span>
+                <a href="{{ path('app_logout') }}" class="btn-logout">Quitter</a>
+            </nav>
+        </header>
+
+        <!-- HERO -->
+        <div class="hero">
+            <div class="hero-eyebrow">Voie de la Lune</div>
+            <h1 class="hero-title">Grimoire<br>Lunaire</h1>
+            <p class="hero-subtitle">Chamanisme & Néochamanisme</p>
+
+            <!-- FICHES -->
+            <div class="fiche-grid">
+
+                <div class="fiche-card" data-corner="🌙">
+                    <span class="fiche-tag">Tradition Ancestrale</span>
+                    <h2 class="fiche-title">Le Chamanisme</h2>
+                    <div class="fiche-body">
+                        <p>Le Chamanisme est l'une des plus anciennes pratiques spirituelles de l'humanité. Le chaman — passeur entre les mondes — voyage dans les royaumes invisibles pour apporter guérison, guidance et équilibre à sa communauté.</p>
+                        <div class="fiche-divider"></div>
+                        <p>Intimement lié aux cycles lunaires, il travaille avec les esprits des ancêtres, des animaux totem et des forces élémentaires. Le tambour est son véhicule, la transe son outil, la lune son guide.</p>
+                    </div>
+                    <div class="fiche-pillars">
+                        <span class="pillar">Voyage chamanique</span>
+                        <span class="pillar">Esprits guides</span>
+                        <span class="pillar">Tambour</span>
+                        <span class="pillar">Totem</span>
+                        <span class="pillar">Transe</span>
+                    </div>
+                </div>
+
+                <div class="fiche-card" data-corner="🐺">
+                    <span class="fiche-tag">Renouveau Contemporain</span>
+                    <h2 class="fiche-title">Le Néochamanisme</h2>
+                    <div class="fiche-body">
+                        <p>Né de la rencontre entre les traditions autochtones mondiales et la spiritualité contemporaine, le Néochamanisme adapte les pratiques ancestrales à notre époque tout en honorant leurs racines profondes.</p>
+                        <div class="fiche-divider"></div>
+                        <p>Il intègre la psychologie des profondeurs, la connexion aux cycles naturels et lunaires, et la relation aux esprits de la nature dans une pratique personnelle et évolutive de transformation intérieure.</p>
+                    </div>
+                    <div class="fiche-pillars">
+                        <span class="pillar">Core shamanism</span>
+                        <span class="pillar">Monde inférieur</span>
+                        <span class="pillar">Monde supérieur</span>
+                        <span class="pillar">Extraction</span>
+                        <span class="pillar">Psychopompe</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SÉPARATEUR -->
+            <div class="section-sep">
+                <div class="section-sep-line"></div>
+                <span class="section-sep-symbol">✦</span>
+                <span class="section-sep-text">Les Portes du Grimoire</span>
+                <span class="section-sep-symbol">✦</span>
+                <div class="section-sep-line"></div>
+            </div>
+        </div>
+
+        <!-- MODULES -->
+        <div class="modules-grid">
+
+            <a href="{{ path('bestiaire_index') }}" class="module-btn">
+                <span class="module-icon">🐉</span>
+                <span class="module-name">Bestiaire</span>
+                <span class="module-desc">Esprits & animaux totem</span>
+            </a>
+
+            <a href="{{ path('pp_index') }}" class="module-btn">
+                <span class="module-icon">🌿</span>
+                <span class="module-name">Plantes & Pierres</span>
+                <span class="module-desc">Vertus & correspondances</span>
+            </a>
+
+            <a href="#" class="module-btn">
+                <span class="module-badge">bientôt</span>
+                <span class="module-icon">🥁</span>
+                <span class="module-name">Outils</span>
+                <span class="module-desc">Instruments sacrés</span>
+            </a>
+
+            <a href="#" class="module-btn">
+                <span class="module-badge">bientôt</span>
+                <span class="module-icon">🗺️</span>
+                <span class="module-name">Plans d'Existence</span>
+                <span class="module-desc">Les trois mondes</span>
+            </a>
+
+            <a href="#" class="module-btn">
+                <span class="module-badge">bientôt</span>
+                <span class="module-icon">🌑</span>
+                <span class="module-name">Calendrier</span>
+                <span class="module-desc">Phases de lune & cycles</span>
+            </a>
+
+            <a href="#" class="module-btn">
+                <span class="module-badge">bientôt</span>
+                <span class="module-icon">🏪</span>
+                <span class="module-name">Marché</span>
+                <span class="module-desc">Objets & stock magique</span>
+            </a>
+
+            <a href="#" class="module-btn">
+                <span class="module-badge">bientôt</span>
+                <span class="module-icon">🔮</span>
+                <span class="module-name">Sorts & Rituels</span>
+                <span class="module-desc">Cérémonies & voyages</span>
+            </a>
+
+            <a href="#" class="module-btn">
+                <span class="module-badge">bientôt</span>
+                <span class="module-icon">📖</span>
+                <span class="module-name">Fiches Magiques</span>
+                <span class="module-desc">Définitions & savoirs</span>
+            </a>
+
+        </div>
+
+        <footer>
+            Grimoire Idalgui · Voie Lunaire · Les secrets restent entre les murs du grimoire
+        </footer>
+    </div>
+
+    <script>
+        function createParticle() {
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            const size = Math.random() * 3 + 1;
+            const hue = 210 + Math.random() * 40;
+            p.style.cssText = `
+                width: ${size}px;
+                height: ${size}px;
+                left: ${Math.random() * 100}vw;
+                animation-duration: ${Math.random() * 20 + 12}s;
+                animation-delay: ${Math.random() * 8}s;
+                background: hsl(${hue}, 40%, ${55 + Math.random() * 20}%);
+                box-shadow: 0 0 ${size * 4}px hsl(${hue}, 40%, 65%);
+            `;
+            document.getElementById('particles').appendChild(p);
+            setTimeout(() => p.remove(), 28000);
+        }
+
+        for (let i = 0; i < 15; i++) setTimeout(createParticle, i * 600);
+        setInterval(createParticle, 2500);
+    </script>
 </body>
 </html>
