@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grimoire Double — Connexion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --gold-light: #f5e6a3;
+            --gold-mid: #c9a84c;
+            --gold-dark: #7a5c1e;
+            --gold-deep: #3b2a0a;
+            --silver-light: #e8eaf0;
+            --silver-mid: #8a94b0;
+            --silver-dark: #3a4060;
+            --silver-deep: #0d1020;
+            --violet-deep: #2a0a4a;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'EB Garamond', serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #1a0f00;
+        }
+
+        /* ===== BACKGROUND ===== */
+        .bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
+
+        .bg-solar, .bg-lunar {
+            position: absolute;
+            inset: 0;
+            transition: opacity 1.2s ease;
+        }
+
+        .bg-solar {
+            background:
+                radial-gradient(ellipse 80% 60% at 30% 20%, #f5d06080 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 80% 80%, #c9a84c40 0%, transparent 60%),
+                linear-gradient(160deg, #3b2a0a 0%, #7a5c1e 30%, #1a0f00 70%, #0a0600 100%);
+            opacity: 1;
+        }
+
+        .bg-lunar {
+            background:
+                radial-gradient(ellipse 70% 50% at 70% 15%, #c8d4f040 0%, transparent 60%),
+                radial-gradient(ellipse 80% 60% at 20% 80%, #2a0a4a60 0%, transparent 60%),
+                linear-gradient(160deg, #0d1020 0%, #1a2040 35%, #0d1020 65%, #0a0614 100%);
+            opacity: 0;
+        }
+
+        body.lunar .bg-solar { opacity: 0; }
+        body.lunar .bg-lunar { opacity: 1; }
+
+        /* Stars (lunar) */
+        .stars {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+            background-image:
+                radial-gradient(1px 1px at 10% 15%, #fff 0%, transparent 100%),
+                radial-gradient(1px 1px at 25% 40%, #dde 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 45% 10%, #fff 0%, transparent 100%),
+                radial-gradient(1px 1px at 60% 30%, #eef 0%, transparent 100%),
+                radial-gradient(1px 1px at 75% 5%, #fff 0%, transparent 100%),
+                radial-gradient(1px 1px at 85% 55%, #dde 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 90% 20%, #fff 0%, transparent 100%),
+                radial-gradient(1px 1px at 15% 70%, #eef 0%, transparent 100%),
+                radial-gradient(1px 1px at 35% 85%, #fff 0%, transparent 100%),
+                radial-gradient(1px 1px at 55% 65%, #dde 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 5% 50%, #fff 0%, transparent 100%),
+                radial-gradient(1px 1px at 95% 75%, #eef 0%, transparent 100%);
+        }
+        body.lunar .stars { opacity: 1; }
+
+        /* ===== ORBE ===== */
+        .orb {
+            position: fixed;
+            width: 340px;
+            height: 340px;
+            border-radius: 50%;
+            top: -80px;
+            right: -60px;
+            transition: all 1.5s ease;
+            z-index: 1;
+        }
+
+        .orb-solar {
+            background: radial-gradient(circle at 35% 35%, #fff8d0, #f5d060 40%, #c9a84c 70%, #7a5c1e 100%);
+            box-shadow:
+                0 0 60px #f5d06080,
+                0 0 120px #c9a84c40,
+                inset 0 0 40px #fff8d040;
+            opacity: 1;
+        }
+
+        .orb-lunar {
+            background: radial-gradient(circle at 40% 35%, #f0f4ff, #c8d4f0 40%, #8a94b0 70%, #3a4060 100%);
+            box-shadow:
+                0 0 60px #c8d4f050,
+                0 0 120px #8a94b030,
+                inset 0 0 40px #ffffff30;
+            opacity: 0;
+            top: -80px;
+            right: -60px;
+        }
+
+        body.lunar .orb-solar { opacity: 0; transform: translateY(-40px) scale(0.9); }
+        body.lunar .orb-lunar { opacity: 1; transform: none; }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 480px;
+            padding: 2rem;
+            animation: fadeUp 1s ease both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== CARD ===== */
+        .card {
+            border-radius: 4px;
+            padding: 3rem 3rem 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: background 1.2s ease, border-color 1.2s ease, box-shadow 1.2s ease;
+
+            background: linear-gradient(145deg, rgba(59,42,10,0.85) 0%, rgba(26,15,0,0.95) 100%);
+            border: 1px solid #c9a84c60;
+            box-shadow:
+                0 0 0 1px #7a5c1e30,
+                0 30px 80px #00000080,
+                inset 0 1px 0 #f5d06020;
+            backdrop-filter: blur(20px);
+        }
+
+        body.lunar .card {
+            background: linear-gradient(145deg, rgba(26,32,64,0.85) 0%, rgba(13,16,32,0.95) 100%);
+            border-color: #8a94b060;
+            box-shadow:
+                0 0 0 1px #3a406030,
+                0 30px 80px #00000090,
+                inset 0 1px 0 #c8d4f020;
+        }
+
+        /* Coin ornements */
+        .card::before, .card::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            transition: border-color 1.2s ease;
+        }
+        .card::before {
+            top: 12px; left: 12px;
+            border-top: 1px solid #c9a84c90;
+            border-left: 1px solid #c9a84c90;
+        }
+        .card::after {
+            bottom: 12px; right: 12px;
+            border-bottom: 1px solid #c9a84c90;
+            border-right: 1px solid #c9a84c90;
+        }
+        body.lunar .card::before { border-color: #8a94b090; }
+        body.lunar .card::after  { border-color: #8a94b090; }
+
+        /* ===== EMBLÈME ===== */
+        .emblem {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .emblem-icon {
+            font-size: 3rem;
+            line-height: 1;
+            display: block;
+            margin-bottom: 0.5rem;
+            filter: drop-shadow(0 0 12px #f5d06080);
+            transition: filter 1.2s ease;
+            animation: pulse 4s ease-in-out infinite;
+        }
+        body.lunar .emblem-icon { filter: drop-shadow(0 0 12px #c8d4f080); }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.4rem;
+            letter-spacing: 0.05em;
+            transition: color 1.2s ease;
+            color: #c9a84c;
+        }
+        body.lunar .title { color: #c8d4f0; }
+
+        .subtitle {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            margin-top: 0.4rem;
+            transition: color 1.2s ease;
+            color: #7a5c1e;
+        }
+        body.lunar .subtitle { color: #8a94b0; }
+
+        /* ===== TOGGLE ===== */
+        .toggle-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2.2rem;
+        }
+
+        .toggle-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            transition: color 0.5s ease, opacity 0.5s ease;
+        }
+
+        .label-solar { color: #c9a84c; }
+        .label-lunar { color: #8a94b0; }
+        body.solar .label-solar { opacity: 1; }
+        body.solar .label-lunar { opacity: 0.4; }
+        body.lunar .label-solar { opacity: 0.4; }
+        body.lunar .label-lunar { opacity: 1; }
+
+        .toggle {
+            position: relative;
+            width: 54px;
+            height: 28px;
+            cursor: pointer;
+        }
+
+        .toggle input { display: none; }
+
+        .toggle-track {
+            position: absolute;
+            inset: 0;
+            border-radius: 14px;
+            transition: background 1.2s ease, border-color 1.2s ease;
+            background: rgba(59,42,10,0.8);
+            border: 1px solid #c9a84c60;
+        }
+        body.lunar .toggle-track {
+            background: rgba(13,16,32,0.8);
+            border-color: #8a94b060;
+        }
+
+        .toggle-thumb {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            transition: transform 1.2s cubic-bezier(.4,0,.2,1), background 1.2s ease, box-shadow 1.2s ease;
+            background: radial-gradient(circle at 35% 35%, #fff8d0, #c9a84c);
+            box-shadow: 0 0 8px #f5d06080;
+        }
+        body.lunar .toggle-thumb {
+            transform: translateX(26px);
+            background: radial-gradient(circle at 40% 35%, #f0f4ff, #8a94b0);
+            box-shadow: 0 0 8px #c8d4f080;
+        }
+
+        /* ===== DIVIDER ===== */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.8rem;
+        }
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            transition: background 1.2s ease;
+            background: linear-gradient(90deg, transparent, #c9a84c50, transparent);
+        }
+        body.lunar .divider-line { background: linear-gradient(90deg, transparent, #8a94b050, transparent); }
+        .divider-symbol {
+            font-size: 0.9rem;
+            transition: color 1.2s ease;
+            color: #c9a84c60;
+        }
+        body.lunar .divider-symbol { color: #8a94b060; }
+
+        /* ===== FORM ===== */
+        .field {
+            margin-bottom: 1.4rem;
+        }
+
+        label {
+            display: block;
+            font-family: 'Cinzel', serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            transition: color 1.2s ease;
+            color: #c9a84c;
+        }
+        body.lunar label { color: #8a94b0; }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 2px;
+            font-family: 'EB Garamond', serif;
+            font-size: 1rem;
+            outline: none;
+            transition: background 1.2s ease, border-color 0.3s ease, color 1.2s ease, box-shadow 0.3s ease;
+
+            background: rgba(59,42,10,0.4);
+            border: 1px solid #c9a84c40;
+            color: #f5e6a3;
+        }
+        body.lunar input[type="text"],
+        body.lunar input[type="email"],
+        body.lunar input[type="password"] {
+            background: rgba(13,16,32,0.5);
+            border-color: #8a94b040;
+            color: #e8eaf0;
+        }
+
+        input::placeholder { opacity: 0.35; }
+
+        input:focus {
+            border-color: #c9a84c;
+            box-shadow: 0 0 0 2px #c9a84c20, 0 0 20px #c9a84c10;
+        }
+        body.lunar input:focus {
+            border-color: #8a94b0;
+            box-shadow: 0 0 0 2px #8a94b020, 0 0 20px #8a94b010;
+        }
+
+        /* ===== BOUTON ===== */
+        .btn {
+            width: 100%;
+            padding: 0.9rem;
+            border: none;
+            border-radius: 2px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            margin-top: 0.5rem;
+            transition: background 1.2s ease, color 1.2s ease, box-shadow 0.3s ease;
+
+            background: linear-gradient(135deg, #c9a84c, #7a5c1e);
+            color: #f5e6a3;
+            box-shadow: 0 4px 20px #c9a84c30;
+        }
+        body.lunar .btn {
+            background: linear-gradient(135deg, #3a4060, #1a2040);
+            color: #c8d4f0;
+            box-shadow: 0 4px 20px #8a94b030;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #ffffff20, transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .btn:hover::after { opacity: 1; }
+        .btn:hover { box-shadow: 0 6px 30px #c9a84c50; }
+        body.lunar .btn:hover { box-shadow: 0 6px 30px #8a94b050; }
+
+        /* ===== MESSAGE ERREUR ===== */
+        .error-msg {
+            background: rgba(180, 40, 40, 0.15);
+            border: 1px solid rgba(200, 60, 60, 0.4);
+            border-radius: 2px;
+            padding: 0.7rem 1rem;
+            font-size: 0.85rem;
+            color: #e89090;
+            margin-bottom: 1.2rem;
+            font-style: italic;
+        }
+
+        /* ===== FOOTER CARD ===== */
+        .card-footer {
+            text-align: center;
+            margin-top: 1.8rem;
+            font-size: 0.75rem;
+            transition: color 1.2s ease;
+            color: #7a5c1e80;
+        }
+        body.lunar .card-footer { color: #3a406080; }
+
+        /* ===== PARTICULES ===== */
+        .particles {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: float linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes float {
+            0%   { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 0.6; }
+            100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="solar" id="body">
+
+    <!-- Background -->
+    <div class="bg">
+        <div class="bg-solar"></div>
+        <div class="bg-lunar"></div>
+        <div class="stars"></div>
+    </div>
+
+    <!-- Particules -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Orbes -->
+    <div class="orb orb-solar"></div>
+    <div class="orb orb-lunar"></div>
+
+    <!-- Card -->
+    <div class="container">
+        <div class="card">
+
+            <!-- Emblème -->
+            <div class="emblem">
+                <span class="emblem-icon" id="emblemIcon">☀️</span>
+                <div class="title">Grimoire Double</div>
+                <div class="subtitle" id="subtitleText">Voie Solaire · Druidisme</div>
+            </div>
+
+            <!-- Toggle Jour / Nuit -->
+            <div class="toggle-wrap">
+                <span class="toggle-label label-solar">Solaire</span>
+                <label class="toggle" for="themeToggle" title="Basculer Solaire / Lunaire">
+                    <input type="checkbox" id="themeToggle">
+                    <div class="toggle-track"></div>
+                    <div class="toggle-thumb"></div>
+                </label>
+                <span class="toggle-label label-lunar">Lunaire</span>
+            </div>
+
+            <!-- Divider -->
+            <div class="divider">
+                <div class="divider-line"></div>
+                <span class="divider-symbol">✦</span>
+                <div class="divider-line"></div>
+            </div>
+
+            {# Affichage des erreurs Symfony #}
+            {% if error %}
+                <div class="error-msg">
+                    ⚠ {{ error.messageKey | trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            {# Formulaire de connexion Symfony Security #}
+            <form method="post" action="{{ path('app_login') }}">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <input type="hidden" name="_theme" id="themeInput" value="solar">
+
+                <div class="field">
+                    <label for="username">Identifiant</label>
+                    <input type="text"
+                           id="username"
+                           name="_username"
+                           value="{{ last_username }}"
+                           placeholder="Ton nom de praticien·ne"
+                           autocomplete="username"
+                           autofocus>
+                </div>
+
+                <div class="field">
+                    <label for="password">Mot de passe</label>
+                    <input type="password"
+                           id="password"
+                           name="_password"
+                           placeholder="••••••••••••"
+                           autocomplete="current-password">
+                </div>
+
+                <button type="submit" class="btn">
+                    Entrer dans le Grimoire
+                </button>
+            </form>
+
+            <div class="card-footer">
+                Les secrets restent entre les murs du grimoire.
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const body = document.getElementById('body');
+        const toggle = document.getElementById('themeToggle');
+        const emblemIcon = document.getElementById('emblemIcon');
+        const subtitleText = document.getElementById('subtitleText');
+        const themeInput = document.getElementById('themeInput');
+        const particlesEl = document.getElementById('particles');
+
+        // Particules
+        function createParticle(theme) {
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            const size = Math.random() * 4 + 1;
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+            p.style.animationDelay = (Math.random() * 10) + 's';
+            if (theme === 'solar') {
+                p.style.background = `hsl(${40 + Math.random()*20}, 80%, ${60 + Math.random()*20}%)`;
+                p.style.boxShadow = `0 0 ${size*3}px #f5d06080`;
+            } else {
+                p.style.background = `hsl(${210 + Math.random()*30}, 40%, ${60 + Math.random()*20}%)`;
+                p.style.boxShadow = `0 0 ${size*3}px #c8d4f060`;
+            }
+            particlesEl.appendChild(p);
+            setTimeout(() => p.remove(), 25000);
+        }
+
+        function spawnParticles(theme) {
+            particlesEl.innerHTML = '';
+            for (let i = 0; i < 12; i++) {
+                setTimeout(() => createParticle(theme), i * 400);
+            }
+        }
+
+        function setInterval_particles(theme) {
+            spawnParticles(theme);
+            return setInterval(() => createParticle(theme), 2000);
+        }
+
+        let particleInterval = setInterval_particles('solar');
+
+        toggle.addEventListener('change', () => {
+            clearInterval(particleInterval);
+            if (toggle.checked) {
+                body.className = 'lunar';
+                emblemIcon.textContent = '🌙';
+                subtitleText.textContent = 'Voie Lunaire · Chamanisme';
+                themeInput.value = 'lunar';
+                particleInterval = setInterval_particles('lunar');
+            } else {
+                body.className = 'solar';
+                emblemIcon.textContent = '☀️';
+                subtitleText.textContent = 'Voie Solaire · Druidisme';
+                themeInput.value = 'solar';
+                particleInterval = setInterval_particles('solar');
+            }
+        });
+
+        // Pré-remplir le toggle si l'URL ou session indique le thème
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('theme') === 'lunar') {
+            toggle.checked = true;
+            toggle.dispatchEvent(new Event('change'));
+        }
+    </script>
+
+</body>
+</html>
