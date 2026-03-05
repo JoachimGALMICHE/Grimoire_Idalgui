@@ -1,15 +1,17 @@
-FROM php:8.2-cli
+FROM php:8.4-cli
 
+# Cache bust: v2
 RUN apt-get update && apt-get install -y \
-    git unzip libpq-dev \
-    && docker-php-ext-install pdo pdo_pgsql pdo_mysql
+    git unzip libpq-dev libzip-dev \
+    && docker-php-ext-install pdo pdo_pgsql pdo_mysql zip
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-scripts
+RUN php bin/console dotenv:dump prod --env=prod
 
 EXPOSE 8080
 
