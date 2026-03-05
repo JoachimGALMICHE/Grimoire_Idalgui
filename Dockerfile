@@ -10,7 +10,7 @@ WORKDIR /app
 COPY . .
 
 RUN composer install --no-dev --optimize-autoloader --no-scripts
-RUN APP_ENV=prod composer dump-env prod
+RUN php bin/console dotenv:dump prod --env=prod
 
 EXPOSE 8080
 
