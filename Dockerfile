@@ -10,10 +10,13 @@ WORKDIR /app
 COPY . .
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV APP_ENV=prod
+ENV APP_SECRET=changeme
 
 RUN composer install --no-dev --optimize-autoloader --no-scripts
-RUN php bin/console dotenv:dump prod --env=prod
+RUN rm -f .env .env.local .env.local.php
 
 EXPOSE 8080
 
 CMD ["php", "-S", "0.0.0.0:8080", "-t", "public/"]
+
