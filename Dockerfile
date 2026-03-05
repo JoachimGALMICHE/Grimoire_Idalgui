@@ -9,7 +9,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-scripts
+RUN APP_ENV=prod composer dump-env prod
 
 EXPOSE 8080
 
